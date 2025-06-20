@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # catalogo_produtos
 
 A new Flutter project.
@@ -15,7 +14,3 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
-=======
-# APP-Mobile-Catalogo-de-Produtos
-Aplicativo mobile de catálogo de produtos desenvolvido em Flutter.
->>>>>>> 65bcade15c2f18a8c14dd0920badd86086d80693
