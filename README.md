@@ -1,16 +1,26 @@
-# catalogo_produtos
+# APP-Mobile-Catalogo-de-Produtos
 
-A new Flutter project.
+Aplicativo móvel de catálogo de produtos desenvolvido em Flutter.
 
-## Getting Started
+## Descrição
 
-This project is a starting point for a Flutter application.
+Este projeto é um aplicativo Flutter que apresenta um catálogo de produtos, permitindo que os usuários naveguem e visualizem informações detalhadas sobre cada item.
 
-A few resources to get you started if this is your first Flutter project:
+## Estrutura do projeto
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- `lib/`: Código fonte principal do aplicativo.
+- `assets/`: Imagens, ícones e outros recursos estáticos.
+- `test/`: Testes unitários e de widget.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Como executar
+
+### Pré-requisitos
+
+- Flutter instalado ([Guia oficial](https://docs.flutter.dev/get-started/install))
+- Emulador Android/iOS ou dispositivo físico configurado
+
+### Passos para rodar
+
+```bash
+flutter pub get
+flutter run
