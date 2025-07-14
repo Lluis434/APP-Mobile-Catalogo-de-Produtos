@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:catalogo_produtos/src/auth/components/custom_text_field.dart';
 import 'package:catalogo_produtos/src/auth/sign_up_screen.dart';
+import 'package:catalogo_produtos/src/base/base_screen.dart';
 import 'package:catalogo_produtos/src/config/custom_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -104,7 +105,13 @@ class LoginScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(18),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (c) {
+                              return const BaseScreen();
+                            }));
+
+                        },
                         child: const Text(
                           'Entrar',
                           style: TextStyle(
@@ -167,7 +174,7 @@ class LoginScreen extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (c){
                                 
-return SignUpScreen();
+  return SignUpScreen();
                               })
                           );
                         },
