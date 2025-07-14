@@ -4,12 +4,13 @@ class CustomTextField extends StatefulWidget {
   final IconData icon;
   final String label;
   final bool isSecret;
-  
+  final TextEditingController controller;
 
   const CustomTextField({
     Key? key,
     required this.icon,
     required this.label,
+    required this.controller,
     this.isSecret = false,
   }) : super(key: key);
 
@@ -18,14 +19,11 @@ class CustomTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
-
   bool isObscure = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
     isObscure = widget.isSecret;
   }
 
@@ -34,22 +32,25 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: TextFormField(
+        controller: widget.controller,
         obscureText: isObscure,
         decoration: InputDecoration(
           prefixIcon: Icon(widget.icon),
           suffixIcon: widget.isSecret
               ? IconButton(
-                onPressed: () {
-                  setState(() {
-                    isObscure = !isObscure;
-                  });
-                }, 
-                icon:  Icon(isObscure ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () {
+                    setState(() {
+                      isObscure = !isObscure;
+                    });
+                  },
+                  icon: Icon(isObscure ? Icons.visibility : Icons.visibility_off),
                 )
               : null,
           labelText: widget.label,
           isDense: true,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
         ),
       ),
     );

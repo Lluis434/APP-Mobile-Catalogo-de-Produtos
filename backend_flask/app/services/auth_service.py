@@ -1,6 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.models.usuario import Usuario
 from app import db
+from flask import session
 
 def register_user(nome, email, senha, confirma_senha):
     if not all([nome, email, senha, confirma_senha]):
@@ -32,4 +33,8 @@ def login_user(email, senha):
     if not check_password_hash(user.senha_hash, senha):
         return {"error": "Email ou senha incorretos."}, 401
 
-    return {"message": "Login realizado com sucesso."}, 200
+    # Armazena user_id e is_admin na sessão para controle de acesso
+    session['user_id'] = user.id
+    session['is_admin'] = user.is_admin
+
+    return {"message": "Login realizado com sucesso.", "is_admin": user.is_admin}, 200
