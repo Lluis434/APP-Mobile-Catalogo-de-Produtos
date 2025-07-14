@@ -166,7 +166,8 @@ class LoginScreen extends StatelessWidget {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (c){
-                                return SingnUpScreen();
+                                
+return SignUpScreen();
                               })
                           );
                         },
