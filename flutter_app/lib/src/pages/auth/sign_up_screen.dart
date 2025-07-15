@@ -1,4 +1,4 @@
-import 'package:catalogo_produtos/src/auth/components/custom_text_field.dart';
+import 'package:catalogo_produtos/src/pages/auth/components/custom_text_field.dart';
 import 'package:catalogo_produtos/src/config/custom_colors.dart';
 import 'package:flutter/material.dart';
 
