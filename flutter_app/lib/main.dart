@@ -16,12 +16,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false, // Oculta a faixa de debug
       theme: ThemeData(
-
-        primaryColor: Color(0xFF813FF2),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Color(0xFF813FF2)),
+        primaryColor: const Color(0xFF813FF2),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF813FF2)),
       ),
-      home: const LoginScreen(), // Correção do parêntese e ;
+      home: const LoginScreen(),
     );
   }
 }

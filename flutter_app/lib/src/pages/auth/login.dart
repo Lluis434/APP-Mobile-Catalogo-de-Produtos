@@ -4,9 +4,74 @@ import 'package:catalogo_produtos/src/pages/auth/sign_up_screen.dart';
 import 'package:catalogo_produtos/src/pages/base/base_screen.dart';
 import 'package:catalogo_produtos/src/config/custom_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import dotenv
+import 'dart:convert';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final emailController = TextEditingController();
+  final senhaController = TextEditingController();
+
+  // Função que envia dados para o backend e processa resposta do login
+  Future<void> fazerLogin() async {
+    final baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:5000'; // fallback
+    final url = Uri.parse('$baseUrl/auth/login');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': emailController.text.trim(), // evita espaços extras
+          'senha': senhaController.text,
+        }),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        // Login bem-sucedido
+        _mostrarDialogo('Sucesso', responseData['message'] ?? 'Login realizado com sucesso!');
+        // Aqui você pode adicionar navegação para tela principal, por exemplo
+      } else {
+        // Erro no login
+        _mostrarDialogo('Erro', responseData['error'] ?? 'Erro inesperado no login');
+      }
+    } catch (e) {
+      _mostrarDialogo('Erro', 'Erro de conexão com o servidor.');
+    }
+  }
+
+  // Método para exibir diálogos de mensagem
+  void _mostrarDialogo(String titulo, String mensagem) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(titulo),
+        content: Text(mensagem),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    senhaController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,78 +89,70 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Nome do app
-                    const Text.rich(TextSpan( 
-                      style: TextStyle(
-                        fontSize: 40, 
-                      ),
-                      // Categorias 
-                      children: [
-                        TextSpan(
-                          text: 'Maliu',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+                    const Text.rich(
+                      TextSpan(
+                        style: TextStyle(fontSize: 40),
+                        children: [
+                          TextSpan(
+                            text: 'Maliu',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
-                    )),
-                    // Categorias 
-                  SizedBox(
-                    height: 30,
-                    child: DefaultTextStyle(
-                      style: TextStyle(
-                        fontSize: 25,
+                        ],
                       ),
-                      child: AnimatedTextKit(
-                        pause: Duration.zero,
-                        repeatForever: true,
-                        animatedTexts: [
-                          FadeAnimatedText('Moletom'),
-                          FadeAnimatedText('Blusas'),
-                          FadeAnimatedText('Calsas'),
-                          FadeAnimatedText('Moletom'),
-                          FadeAnimatedText('Shorts'),
-                          FadeAnimatedText('Bolsas'),
-                          FadeAnimatedText('Acessórios'),
-                      
-                        ]),
                     ),
-                  )
+                    SizedBox(
+                      height: 30,
+                      child: DefaultTextStyle(
+                        style: const TextStyle(fontSize: 25),
+                        child: AnimatedTextKit(
+                          pause: Duration.zero,
+                          repeatForever: true,
+                          animatedTexts: [
+                            FadeAnimatedText('Moletom'),
+                            FadeAnimatedText('Blusas'),
+                            FadeAnimatedText('Calças'),
+                            FadeAnimatedText('Moletom'),
+                            FadeAnimatedText('Shorts'),
+                            FadeAnimatedText('Bolsas'),
+                            FadeAnimatedText('Acessórios'),
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
-          
+
               // Formulário
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 40,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(45),
-                  ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(45)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Email
-                    const CustomTextField(
+                    CustomTextField(
                       icon: Icons.email,
                       label: 'Email',
+                      controller: emailController,
                     ),
-          
+
                     // Senha
-                    const CustomTextField(
+                    CustomTextField(
                       icon: Icons.lock,
                       label: 'Senha',
                       isSecret: true,
+                      controller: senhaController,
                     ),
-          
+
                     const SizedBox(height: 20),
-          
+
                     SizedBox(
                       height: 50,
                       child: ElevatedButton(
@@ -105,23 +162,14 @@ class LoginScreen extends StatelessWidget {
                             borderRadius: BorderRadius.circular(18),
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(builder: (c) {
-                              return const BaseScreen();
-                            }));
-
-                        },
+                        onPressed: fazerLogin,
                         child: const Text(
                           'Entrar',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                          ),
+                          style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
                     ),
-          
+
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
@@ -132,7 +180,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-          
+
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Row(
@@ -153,10 +201,10 @@ class LoginScreen extends StatelessWidget {
                               thickness: 2,
                             ),
                           ),
-                        ], // Divisor
+                        ],
                       ),
                     ),
-          
+
                     SizedBox(
                       height: 50,
                       child: OutlinedButton(
@@ -174,15 +222,13 @@ class LoginScreen extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (c){
                                 
-  return SignUpScreen();
+return SignUpScreen();
                               })
                           );
                         },
                         child: const Text(
                           'Criar Conta',
-                          style: TextStyle(
-                            fontSize: 18,
-                          ),
+                          style: TextStyle(fontSize: 18),
                         ),
                       ),
                     ),
