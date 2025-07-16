@@ -32,8 +32,8 @@ class _CartTileState extends State<CartTile> {
         // Imagem
         leading: Image.asset(
           widget.cartItem.item.imgUrl,
-          height: 80,
-          width: 80,
+          height: 40, ///
+          width: 40, /// ver 
           fit: BoxFit.cover,
         ),
 
