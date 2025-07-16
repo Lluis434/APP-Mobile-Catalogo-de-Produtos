@@ -2,10 +2,23 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.models.usuario import Usuario
 from app import db
 from flask import session
+from email_validator import validate_email, EmailNotValidError
 
 def register_user(nome, email, senha, confirma_senha):
     if not all([nome, email, senha, confirma_senha]):
         return {"error": "Todos os campos são obrigatórios."}, 400
+    
+    if len(nome.strip()) < 3:
+        return {"error": "O nome deve ter pelo menos 3 caracteres."}, 400
+
+    try:
+        valid = validate_email(email)
+        email = valid.email
+    except EmailNotValidError:
+        return {"error": "Formato de email inválido. Use o padrão: usuario@dominio.com"}, 400 
+    
+    if not (6 <= len(senha) <= 12):
+        return {"error": "A senha deve ter entre 6 e 12 caracteres."}, 400
 
     if senha != confirma_senha:
         return {"error": "Senha e confirmação não coincidem."}, 400
