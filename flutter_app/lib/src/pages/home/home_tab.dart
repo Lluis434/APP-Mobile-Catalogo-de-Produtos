@@ -103,7 +103,12 @@ class _HomeTabState extends State<HomeTab> {
         elevation: 0,
         title: const Text(
           'Maliu',
-          style: TextStyle(fontSize: 30),
+          style: TextStyle(
+            fontFamily: 'DancingScript',
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF813FF2),
+          ),
         ),
         actions: [
           Badge(

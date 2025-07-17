@@ -107,6 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextSpan(
                             text: 'Maliu',
                             style: TextStyle(
+                              fontFamily: 'DancingScript',
+                              fontSize: 52,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
@@ -117,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: 30,
                       child: DefaultTextStyle(
-                        style: const TextStyle(fontSize: 25),
+                        style: const TextStyle(fontSize: 20),
                         child: AnimatedTextKit(
                           pause: Duration.zero,
                           repeatForever: true,

@@ -9,7 +9,7 @@ class ItemTile extends StatelessWidget {
 
   ItemTile({super.key, required this.item});
   // Removido const do construtor
-  ItemTile({super.key, required this.item});
+
 
   final UtilsServices utilsServices = UtilsServices();
 
