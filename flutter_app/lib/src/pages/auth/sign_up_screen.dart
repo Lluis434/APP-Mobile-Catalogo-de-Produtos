@@ -1,9 +1,87 @@
+import 'package:flutter/material.dart';
 import 'package:catalogo_produtos/src/pages/auth/components/custom_text_field.dart';
 import 'package:catalogo_produtos/src/config/custom_colors.dart';
-import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import dotenv
+import 'dart:convert';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final nomeController = TextEditingController();
+  final emailController = TextEditingController();
+  final senhaController = TextEditingController();
+  final confirmaSenhaController = TextEditingController();
+
+  Future<void> cadastrarUsuario() async {
+    final apiUrl = dotenv.env['API_URL'] ?? 'http://localhost:5000';
+    final url = Uri.parse('$apiUrl/auth/register');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'nome': nomeController.text,
+          'email': emailController.text,
+          'senha': senhaController.text,
+          'confirma_senha': confirmaSenhaController.text,
+        }),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        _mostrarDialogo(
+          'Sucesso',
+          responseData['message'] ?? 'Usuário cadastrado com sucesso!',
+          redirecionar: true,
+        );
+      } else {
+        _mostrarDialogo(
+          'Erro',
+          responseData['error'] ?? 'Erro inesperado ao cadastrar.',
+        );
+      }
+    } catch (e) {
+      _mostrarDialogo('Erro', 'Erro de conexão com o servidor.');
+    }
+  }
+
+  void _mostrarDialogo(String titulo, String mensagem, {bool redirecionar = false}) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(titulo),
+        content: Text(mensagem),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // fecha o dialog
+              if (redirecionar) {
+                Navigator.of(context).pushReplacementNamed('/home'); // redireciona para home
+              }
+            },
+            child: const Text('OK'),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    nomeController.dispose();
+    emailController.dispose();
+    senhaController.dispose();
+    confirmaSenhaController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,58 +108,51 @@ class SignUpScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Formulário
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 40,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
                     decoration: const BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(45),
-                      ),
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(45)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const CustomTextField(
-                          icon: Icons.email,
-                          label: 'Email',
-                        ),
-                        const CustomTextField(
+                        CustomTextField(
                           icon: Icons.person,
                           label: 'Nome',
+                          controller: nomeController,
                         ),
-                        const CustomTextField(
+                        CustomTextField(
+                          icon: Icons.email,
+                          label: 'Email',
+                          controller: emailController,
+                        ),
+                        CustomTextField(
                           icon: Icons.lock,
                           label: 'Crie sua senha',
                           isSecret: true,
+                          controller: senhaController,
                         ),
-                        const CustomTextField(
+                        CustomTextField(
                           icon: Icons.lock,
                           label: 'Confirme sua senha',
                           isSecret: true,
+                          controller: confirmaSenhaController,
                         ),
                         const SizedBox(height: 20),
                         SizedBox(
                           height: 50,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF813FF2), // Mesma cor do botão "Entrar"
+                              backgroundColor: const Color(0xFF813FF2),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18),
                               ),
                             ),
-                            onPressed: () {
-                              // Ação ao cadastrar
-                            },
+                            onPressed: cadastrarUsuario,
                             child: const Text(
                               'Cadastrar usuário',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white, // Texto branco
-                              ),
+                              style: TextStyle(fontSize: 18, color: Colors.white),
                             ),
                           ),
                         ),
@@ -95,13 +166,8 @@ class SignUpScreen extends StatelessWidget {
                 left: 10,
                 child: SafeArea(
                   child: IconButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                   ),
                 ),
               ),

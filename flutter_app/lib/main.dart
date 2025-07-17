@@ -1,6 +1,7 @@
+import 'package:catalogo_produtos/src/pages/auth/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'src/pages/auth/login.dart';
+import 'src/pages/base/base_screen.dart'; // Certifique-se de que este caminho está correto
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env"); // Carrega variáveis de ambiente
@@ -14,14 +15,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false, // Oculta a faixa de debug
+      debugShowCheckedModeBanner: false, 
       theme: ThemeData(
-
-        primaryColor: Color(0xFF813FF2),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Color(0xFF813FF2)),
+        primaryColor: const Color(0xFF813FF2),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF813FF2)),
       ),
-      home: const LoginScreen(), // Correção do parêntese e ;
+      home: const LoginScreen(), 
     );
   }
 }

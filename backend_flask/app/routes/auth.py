@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from app.services.auth_service import register_user, login_user
 
 auth_bp = Blueprint('auth', __name__)
@@ -22,3 +22,9 @@ def login():
         data.get('senha')
     )
     return jsonify(response), status
+
+@auth_bp.route('/logout', methods=['POST'])
+def logout():
+    session.pop('user_id', None)
+    session.pop('is_admin', None)
+    return jsonify({"message": "Logout realizado com sucesso."})
