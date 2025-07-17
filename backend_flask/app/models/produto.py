@@ -8,6 +8,8 @@ class Produto(db.Model):
     descricao = db.Column(db.String(255), nullable=True)
     preco = db.Column(db.Float, nullable=False)
     estoque = db.Column(db.Integer, nullable=False, default=0)
+    tipo = db.Column(db.String(50), nullable=False)
+    imagem = db.Column(db.String(255), nullable=True)  
 
     def __repr__(self):
         return f'<Produto {self.nome}>'
