@@ -1,5 +1,6 @@
 from app.models.produto import Produto
 from flask import url_for
+from sqlalchemy import distinct
 
 def listar_produtos(tipo=None):
     query = Produto.query
@@ -32,3 +33,10 @@ def obter_produto_por_id(produto_id):
         'preco': produto.preco,
         'imagem': url_imagem,
     }
+
+def listar_categorias():
+    tipos = Produto.query.with_entities(distinct(Produto.tipo)).all()
+    # tipos vem como lista de tuplas: [('moletom',), ('blusas',), ...]
+    categorias = [tipo[0] for tipo in tipos if tipo[0]]  # Remove nulos se houver
+    categorias.insert(0, 'todos')  # Opcional: adiciona 'todos' no início
+    return categorias
