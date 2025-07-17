@@ -1,3 +1,4 @@
+import 'package:catalogo_produtos/src/models/cart_item_model.dart';
 import 'package:catalogo_produtos/src/models/item_model.dart';
 
 final ItemModel moletom1 = ItemModel(
@@ -54,4 +55,18 @@ final List<String> categories = [
   'Calças',
   'Sapatos',
   'Vestidos',
+];
+List<CartItemModel> cartItems = [
+  CartItemModel(
+    item: moletom1,
+    quantity: 1,
+  ),
+  CartItemModel(
+    item: moletom2,
+    quantity: 2,
+  ),
+   CartItemModel(
+    item: moletom2,
+    quantity: 5,
+   ),
 ];

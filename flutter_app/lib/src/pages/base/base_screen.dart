@@ -1,3 +1,4 @@
+import 'package:catalogo_produtos/src/pages/cart/cart_tab.dart';
 import 'package:catalogo_produtos/src/pages/home/home_tab.dart';
 import 'package:flutter/material.dart';
 
@@ -19,8 +20,8 @@ class _BaseScreenState extends State<BaseScreen> {
         physics: const NeverScrollableScrollPhysics(),
         controller: pageController,
         children: [
-          HomeTab(),
-          Container(color: Colors.yellow,),
+          const HomeTab(),
+          CartTab(),
           Container(color: Colors.blue,),
           Container(color: Colors.purple,),
         ],
