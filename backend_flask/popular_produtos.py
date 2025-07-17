@@ -54,7 +54,7 @@ with app.app_context():
             imagem="imagens/vestido.png"
         ),
         Produto(
-            nome="Vestido",
+            nome="Vestido Preto",
             descricao="Vestido Preto",
             preco=100.00,
             estoque=30,

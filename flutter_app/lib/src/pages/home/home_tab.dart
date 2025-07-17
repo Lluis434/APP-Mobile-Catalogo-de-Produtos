@@ -6,7 +6,6 @@ import 'package:catalogo_produtos/src/config/custom_colors.dart';
 import 'package:catalogo_produtos/src/pages/home/components/category_tile.dart';
 import 'package:catalogo_produtos/src/pages/home/item_tile.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:catalogo_produtos/src/config/app_data.dart' as appData;
 import 'package:catalogo_produtos/src/models/item_model.dart';  // importe o model
 
 class HomeTab extends StatefulWidget {
@@ -18,13 +17,48 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   String selectedCategory = 'todos';
-  List<ItemModel> produtos = [];  // Alterado para List<ItemModel>
+  List<String> categorias = []; // categorias dinâmicas da API
+  List<ItemModel> produtos = [];
   bool carregando = false;
+  bool carregandoCategorias = true;
 
   @override
   void initState() {
     super.initState();
-    buscarProdutos();
+    buscarCategorias();
+  }
+
+  Future<void> buscarCategorias() async {
+    setState(() => carregandoCategorias = true);
+
+    final apiUrl = dotenv.env['API_URL'] ?? 'http://localhost:5000';
+    final uri = Uri.parse('$apiUrl/produtos/categorias');
+
+    try {
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+
+        categorias = data.map((e) => e.toString()).toList();
+
+        if (!categorias.contains('todos')) {
+          categorias.insert(0, 'todos');
+        }
+
+        selectedCategory = categorias.first;
+
+        await buscarProdutos();
+      } else {
+        categorias = ['todos'];
+        selectedCategory = 'todos';
+      }
+    } catch (e) {
+      categorias = ['todos'];
+      selectedCategory = 'todos';
+    } finally {
+      setState(() => carregandoCategorias = false);
+    }
   }
 
   Future<void> buscarProdutos() async {
@@ -43,7 +77,6 @@ class _HomeTabState extends State<HomeTab> {
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
-          // converte cada JSON para ItemModel
           produtos = data.map((json) => ItemModel.fromJson(json)).toList();
         });
       } else {
@@ -116,28 +149,31 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.only(left: 25),
-            height: 40,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: appData.categories.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
-              itemBuilder: (_, index) {
-                final category = appData.categories[index];
-                return CategoryTile(
-                  category: category,
-                  isSelected: category == selectedCategory,
-                  onPressed: () {
-                    setState(() {
-                      selectedCategory = category;
-                    });
-                    buscarProdutos();
-                  },
-                );
-              },
+          if (carregandoCategorias)
+            const Center(child: CircularProgressIndicator())
+          else
+            Container(
+              padding: const EdgeInsets.only(left: 25),
+              height: 40,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: categorias.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                itemBuilder: (_, index) {
+                  final category = categorias[index];
+                  return CategoryTile(
+                    category: category,
+                    isSelected: category == selectedCategory,
+                    onPressed: () {
+                      setState(() {
+                        selectedCategory = category;
+                      });
+                      buscarProdutos();
+                    },
+                  );
+                },
+              ),
             ),
-          ),
           Expanded(
             child: carregando
                 ? const Center(child: CircularProgressIndicator())

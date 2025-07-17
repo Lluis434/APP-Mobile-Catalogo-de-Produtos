@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, abort, request
-from app.services.produtos_service import listar_produtos, obter_produto_por_id
+from app.services.produtos_service import listar_produtos, obter_produto_por_id, listar_categorias
 
 produtos_bp = Blueprint('produtos', __name__)
 
@@ -16,3 +16,7 @@ def detalhe(id):
         abort(404)
     return jsonify(produto)
 
+@produtos_bp.route('/categorias', methods=['GET'])
+def categorias():
+    categorias = listar_categorias()
+    return jsonify(categorias)
