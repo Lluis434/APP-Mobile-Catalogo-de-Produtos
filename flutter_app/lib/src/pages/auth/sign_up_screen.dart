@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:catalogo_produtos/src/auth/components/custom_text_field.dart';
+import 'package:catalogo_produtos/src/pages/auth/components/custom_text_field.dart';
 import 'package:catalogo_produtos/src/config/custom_colors.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';  // Import dotenv
