@@ -2,35 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:catalogo_produtos/src/pages/commom_widgets/cart_tile.dart';
 import 'package:catalogo_produtos/src/services/utils_services.dart';
 import 'package:catalogo_produtos/src/config/custom_colors.dart';
-import 'package:catalogo_produtos/src/config/app_data.dart' as appData;
+import 'package:provider/provider.dart';
+import 'package:catalogo_produtos/src/managers/cart_manager.dart';
 import 'package:catalogo_produtos/src/models/cart_item_model.dart';
 
-class CartTab extends StatefulWidget {
-  const CartTab({Key? key}) : super(key: key);
+class CartTab extends StatelessWidget {
+  CartTab({Key? key}) : super(key: key);
 
-  @override
-  State<CartTab> createState() => _CartTabState();
-}
-
-class _CartTabState extends State<CartTab> {
   final UtilsServices utilsServices = UtilsServices();
-
-  void removeItemFromCart(CartItemModel cartItem) {
-    setState(() {
-      appData.cartItems.remove(cartItem);
-    });
-  }
-
-  double cartTotalPrice() {
-    double total = 0;
-    for (var item in appData.cartItems) {
-      total += item.totalPrice();
-    }
-    return total;
-  }
 
   @override
   Widget build(BuildContext context) {
+    final cartManager = context.watch<CartManager>();
+
+    void removeItemFromCart(CartItemModel cartItem) {
+      cartManager.removeItem(cartItem);
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
@@ -38,20 +26,23 @@ class _CartTabState extends State<CartTab> {
           'Carrinho',
           style: TextStyle(color: Colors.white),
         ),
-        elevation: 4, // sombra na AppBar
+        elevation: 4,
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              itemCount: appData.cartItems.length,
-              itemBuilder: (_, index) {
-                return CartTile(
-                  cartItem: appData.cartItems[index],
-                  remove: removeItemFromCart,
-                );
-              },
-            ),
+            child: cartManager.items.isEmpty
+                ? const Center(child: Text('Carrinho vazio'))
+                : ListView.builder(
+                    itemCount: cartManager.items.length,
+                    itemBuilder: (_, index) {
+                      final cartItem = cartManager.items[index];
+                      return CartTile(
+                        cartItem: cartItem,
+                        remove: removeItemFromCart,
+                      );
+                    },
+                  ),
           ),
           Container(
             padding: const EdgeInsets.all(16),
@@ -76,7 +67,7 @@ class _CartTabState extends State<CartTab> {
                   style: TextStyle(fontSize: 12),
                 ),
                 Text(
-                  utilsServices.priceToCurrency(cartTotalPrice()),
+                  utilsServices.priceToCurrency(cartManager.totalPrice),
                   style: TextStyle(
                     fontSize: 19,
                     color: CustomColors.customSwatchColor,
@@ -94,8 +85,14 @@ class _CartTabState extends State<CartTab> {
                       ),
                     ),
                     onPressed: () async {
-                      bool? result = await showOrderConfirmation();
-                      print(result);
+                      bool? result = await showOrderConfirmation(context);
+                      if (result == true) {
+                        // Aqui você pode limpar o carrinho ou seguir para próxima etapa
+                        cartManager.clear();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Pedido concluído!')),
+                        );
+                      }
                     },
                     child: const Text(
                       'Concluir Pedido',
@@ -111,7 +108,7 @@ class _CartTabState extends State<CartTab> {
     );
   }
 
-  Future<bool?> showOrderConfirmation() {
+  Future<bool?> showOrderConfirmation(BuildContext context) {
     return showDialog<bool>(
       context: context,
       builder: (context) {
