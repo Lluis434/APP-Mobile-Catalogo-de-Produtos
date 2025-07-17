@@ -3,10 +3,20 @@ import 'package:catalogo_produtos/src/pages/home/home_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'src/pages/base/base_screen.dart';
+import 'package:provider/provider.dart';
+import 'src/managers/cart_manager.dart';  // importe seu CartManager aqui
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+  
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => CartManager()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -25,7 +35,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => const BaseScreen(),  
         '/login': (context) => const LoginScreen(),
-        
       },
     );
   }

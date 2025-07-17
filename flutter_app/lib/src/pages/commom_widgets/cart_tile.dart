@@ -23,21 +23,32 @@ class _CartTileState extends State<CartTile> {
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl = widget.cartItem.item.imgUrl;
+
     return Card(
       margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
       child: ListTile(
-        // Imagem
-        leading: Image.asset(
-          widget.cartItem.item.imgUrl,
+        // ✅ Imagem via URL externa
+        leading: Image.network(
+          imageUrl,
           height: 80,
           width: 80,
           fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(Icons.broken_image, size: 80);
+          },
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
         ),
 
-        // Título
+        // 🟪 Título
         title: Text(
           widget.cartItem.item.itemName,
           style: const TextStyle(
@@ -45,7 +56,7 @@ class _CartTileState extends State<CartTile> {
           ),
         ),
 
-        // Total
+        // 💰 Preço total
         subtitle: Text(
           utilsServices.priceToCurrency(widget.cartItem.totalPrice()),
           style: TextStyle(
@@ -54,7 +65,7 @@ class _CartTileState extends State<CartTile> {
           ),
         ),
 
-        // Quantidade
+        // ➕➖ Quantidade
         trailing: QuantityWidget(
           suffixText: widget.cartItem.item.unit,
           value: widget.cartItem.quantity,

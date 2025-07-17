@@ -1,4 +1,5 @@
 class ItemModel {
+  final String id;         // Novo campo id
   final String itemName;
   final String imgUrl;
   final String unit;
@@ -6,6 +7,7 @@ class ItemModel {
   final String description;
 
   ItemModel({
+    required this.id,       // adicionado no construtor
     required this.description,
     required this.imgUrl,
     required this.itemName,
@@ -27,8 +29,9 @@ class ItemModel {
     }
 
     return ItemModel(
+      id: json['id'].toString(),             // captura o id (ajuste se o nome for diferente)
       description: json['descricao'] ?? '',
-      imgUrl: json['imagem'] ?? '',
+      imgUrl: Uri.decodeFull(json['imagem'] ?? ''),
       itemName: json['nome'] ?? '',
       price: parsePrice(json['preco']),
       unit: json['tipo'] ?? '',
@@ -37,6 +40,7 @@ class ItemModel {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,                             // adicionado no JSON
       'descricao': description,
       'imagem': imgUrl,
       'nome': itemName,

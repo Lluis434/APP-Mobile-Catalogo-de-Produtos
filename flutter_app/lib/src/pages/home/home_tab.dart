@@ -1,12 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:catalogo_produtos/src/config/custom_colors.dart';
 import 'package:catalogo_produtos/src/pages/home/components/category_tile.dart';
 import 'package:catalogo_produtos/src/pages/home/item_tile.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:catalogo_produtos/src/models/item_model.dart';  // importe o model
+import 'package:catalogo_produtos/src/models/item_model.dart'; // importe o model
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
