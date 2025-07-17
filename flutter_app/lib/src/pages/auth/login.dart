@@ -8,7 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../config/custom_colors.dart';
 import '../auth/components/custom_text_field.dart';
 import '../auth/sign_up_screen.dart';
-import '../home/home_tab.dart'; // <- IMPORTAÇÃO DO HOME AQUI
+import '../base/base_screen.dart'; // IMPORTAÇÃO DO BaseScreen AQUI
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -64,9 +64,9 @@ class _LoginScreenState extends State<LoginScreen> {
             onPressed: () {
               Navigator.of(context).pop();
               if (isSucesso) {
-                // Redireciona para HomeTab, substituindo a tela de login
+                // Navega para BaseScreen, que tem o BottomNavigationBar
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const HomeTab()),
+                  MaterialPageRoute(builder: (_) => const BaseScreen()),
                 );
               }
             },
