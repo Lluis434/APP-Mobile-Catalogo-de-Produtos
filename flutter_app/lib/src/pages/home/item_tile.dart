@@ -1,4 +1,5 @@
 import 'package:catalogo_produtos/src/models/item_model.dart';
+import 'package:catalogo_produtos/src/pages/product/product_screen.dart';
 import 'package:catalogo_produtos/src/services/utils_services.dart';
 import 'package:flutter/material.dart';
 import 'package:catalogo_produtos/src/config/custom_colors.dart';
@@ -6,7 +7,6 @@ import 'package:catalogo_produtos/src/config/custom_colors.dart';
 class ItemTile extends StatelessWidget {
   final ItemModel item;
 
-  // Removido const do construtor
   ItemTile({super.key, required this.item});
 
   final UtilsServices utilsServices = UtilsServices();
@@ -18,79 +18,48 @@ class ItemTile extends StatelessWidget {
         Card(
           elevation: 3,
           shadowColor: Colors.grey.shade300,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Imagem do produto via rede
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      item.imgUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => const Center(
-                        child: Icon(
-                          Icons.broken_image,
-                          size: 48,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
-                    ),
+                // imagem
+                Expanded(child: Image.asset(item.imgUrl),
+                ),
+            
+                // nome
+                Text(item.itemName, style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                   ),
                 ),
-
-                const SizedBox(height: 8),
-
-                // Nome do produto
-                Text(
-                  item.itemName,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 4),
-
-                // Preço e unidade
+                
+                // preço = unidade
                 Row(
                   children: [
                     Text(
-                      utilsServices.priceToCurrency(item.price),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: CustomColors.customSwatchColor,
-                      ),
+                  utilsServices.priceToCurrency(item.price),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: CustomColors.customSwatchColor,
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '/${item.unit}',
-                      style: TextStyle(
-                        color: Colors.grey.shade500,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
                     ),
+                    Text('/${item.unit}', style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),)
+        
                   ],
                 ),
               ],
             ),
           ),
+        
+          
         ),
-
-        // Ícone do carrinho
         Positioned(
           top: 4,
           right: 4,
