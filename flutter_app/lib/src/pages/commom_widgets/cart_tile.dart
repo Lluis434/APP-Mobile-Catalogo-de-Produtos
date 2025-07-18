@@ -60,7 +60,7 @@ class _CartTileState extends State<CartTile> {
         subtitle: Text(
           utilsServices.priceToCurrency(widget.cartItem.totalPrice()),
           style: TextStyle(
-            color: CustomColors.customContrastColor,
+            color: Color(0xFF813FF2),
             fontWeight: FontWeight.bold,
           ),
         ),

@@ -129,6 +129,7 @@ class _HomeTabState extends State<HomeTab> {
       ),
       body: Column(
         children: [
+          // Campo de Pesquisa
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: TextFormField(
@@ -153,6 +154,8 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
           ),
+
+          // Categorias
           if (carregandoCategorias)
             const Center(child: CircularProgressIndicator())
           else
@@ -178,6 +181,8 @@ class _HomeTabState extends State<HomeTab> {
                 },
               ),
             ),
+
+          // --- Mudanças para o Grid de Produtos ---
           Expanded(
             child: carregando
                 ? const Center(child: CircularProgressIndicator())
@@ -187,11 +192,14 @@ class _HomeTabState extends State<HomeTab> {
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                         physics: const BouncingScrollPhysics(),
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
+                            // Usando SliverGridDelegateWithMaxCrossAxisExtent
+                            // O 'maxCrossAxisExtent' define a largura MÁXIMA de cada item.
+                            // O Flutter calcula quantas colunas cabem na tela.
+                            SliverGridDelegateWithMaxCrossAxisExtent(
+                          maxCrossAxisExtent: 200, // Ajuste este valor conforme o tamanho ideal do seu ItemTile
                           mainAxisSpacing: 10,
                           crossAxisSpacing: 10,
-                          childAspectRatio: 9 / 11.5,
+                          childAspectRatio: 9 / 11.5, // Mantenha uma proporção consistente
                         ),
                         itemCount: produtos.length,
                         itemBuilder: (_, index) {
@@ -202,6 +210,7 @@ class _HomeTabState extends State<HomeTab> {
                         },
                       ),
           ),
+          // --- Fim das Mudanças para o Grid de Produtos ---
         ],
       ),
     );
