@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:catalogo_produtos/src/pages/auth/components/custom_text_field.dart';
 import 'package:catalogo_produtos/src/config/custom_colors.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';  // Import dotenv
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import dotenv
 import 'dart:convert';
 
 class SignUpScreen extends StatefulWidget {
@@ -37,16 +37,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        _mostrarDialogo('Sucesso', responseData['message'] ?? 'Usuário cadastrado com sucesso!');
+        _mostrarDialogo(
+          'Sucesso',
+          responseData['message'] ?? 'Usuário cadastrado com sucesso!',
+          redirecionar: true,
+        );
       } else {
-        _mostrarDialogo('Erro', responseData['error'] ?? 'Erro inesperado');
+        _mostrarDialogo(
+          'Erro',
+          responseData['error'] ?? 'Erro inesperado ao cadastrar.',
+        );
       }
     } catch (e) {
       _mostrarDialogo('Erro', 'Erro de conexão com o servidor.');
     }
   }
 
-  void _mostrarDialogo(String titulo, String mensagem) {
+  void _mostrarDialogo(String titulo, String mensagem, {bool redirecionar = false}) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -54,7 +61,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         content: Text(mensagem),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              Navigator.of(context).pop(); // fecha o dialog
+              if (redirecionar) {
+                Navigator.of(context).pushReplacementNamed('/home'); // redireciona para home
+              }
+            },
             child: const Text('OK'),
           )
         ],

@@ -1,12 +1,14 @@
+import 'dart:convert';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:catalogo_produtos/src/pages/auth/components/custom_text_field.dart';
-import 'package:catalogo_produtos/src/pages/auth/sign_up_screen.dart';
-import 'package:catalogo_produtos/src/pages/base/base_screen.dart';
-import 'package:catalogo_produtos/src/config/custom_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart'; // Import dotenv
-import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import '../../config/custom_colors.dart';
+import '../auth/components/custom_text_field.dart';
+import '../auth/sign_up_screen.dart';
+import '../base/base_screen.dart'; // IMPORTAÇÃO DO BaseScreen AQUI
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Função que envia dados para o backend e processa resposta do login
   Future<void> fazerLogin() async {
-    final baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:5000'; // fallback
+    final baseUrl = dotenv.env['API_URL'] ?? 'http://localhost:5000';
     final url = Uri.parse('$baseUrl/auth/login');
 
     try {
@@ -29,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
         url,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'email': emailController.text.trim(), // evita espaços extras
+          'email': emailController.text.trim(),
           'senha': senhaController.text,
         }),
       );
@@ -37,11 +39,12 @@ class _LoginScreenState extends State<LoginScreen> {
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        // Login bem-sucedido
-        _mostrarDialogo('Sucesso', responseData['message'] ?? 'Login realizado com sucesso!');
-        // Aqui você pode adicionar navegação para tela principal, por exemplo
+        _mostrarDialogo(
+          'Sucesso',
+          responseData['message'] ?? 'Login realizado com sucesso!',
+          isSucesso: true,
+        );
       } else {
-        // Erro no login
         _mostrarDialogo('Erro', responseData['error'] ?? 'Erro inesperado no login');
       }
     } catch (e) {
@@ -50,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Método para exibir diálogos de mensagem
-  void _mostrarDialogo(String titulo, String mensagem) {
+  void _mostrarDialogo(String titulo, String mensagem, {bool isSucesso = false}) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -58,7 +61,15 @@ class _LoginScreenState extends State<LoginScreen> {
         content: Text(mensagem),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              Navigator.of(context).pop();
+              if (isSucesso) {
+                // Navega para BaseScreen, que tem o BottomNavigationBar
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const BaseScreen()),
+                );
+              }
+            },
             child: const Text('OK'),
           )
         ],
@@ -96,6 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextSpan(
                             text: 'Maliu',
                             style: TextStyle(
+                              fontFamily: 'DancingScript',
+                              fontSize: 52,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
@@ -106,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: 30,
                       child: DefaultTextStyle(
-                        style: const TextStyle(fontSize: 25),
+                        style: const TextStyle(fontSize: 20),
                         child: AnimatedTextKit(
                           pause: Duration.zero,
                           repeatForever: true,
@@ -114,7 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             FadeAnimatedText('Moletom'),
                             FadeAnimatedText('Blusas'),
                             FadeAnimatedText('Calças'),
-                            FadeAnimatedText('Moletom'),
                             FadeAnimatedText('Shorts'),
                             FadeAnimatedText('Bolsas'),
                             FadeAnimatedText('Acessórios'),
@@ -219,11 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         onPressed: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (c){
-                                
-return SignUpScreen();
-                              })
+                            MaterialPageRoute(builder: (_) => const SignUpScreen()),
                           );
                         },
                         child: const Text(

@@ -3,6 +3,8 @@ import 'package:catalogo_produtos/src/models/item_model.dart';
 import 'package:catalogo_produtos/src/pages/commom_widgets/quantity_widget.dart';
 import 'package:catalogo_produtos/src/services/utils_services.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:catalogo_produtos/src/managers/cart_manager.dart'; // importe seu CartManager
 
 class ProductScreen extends StatefulWidget {
   ProductScreen({Key? key, required this.item}) : super(key: key);
@@ -21,17 +23,21 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEDE7F6),
+      backgroundColor: const Color(0xFFEDE7F6),
       body: Stack(
         children: [
-          // conteúdo 
           Column(
             children: [
               Expanded(
                 child: Hero(
                   tag: widget.item.imgUrl,
-                  child: Image.asset(widget.item.imgUrl),
+                  child: Image.network(
+                    widget.item.imgUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Center(child: Icon(Icons.broken_image, size: 80)),
                   ),
+                ),
               ),
               Expanded(
                 child: Container(
@@ -51,7 +57,6 @@ class _ProductScreenState extends State<ProductScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Nome - Quantidade
                       Row(
                         children: [
                           Expanded(
@@ -65,19 +70,17 @@ class _ProductScreenState extends State<ProductScreen> {
                               ),
                             ),
                           ),
-                        QuantityWidget(
-                          suffixText: widget.item.unit,
-                          value: cartItemQuantity,
-                          result:(quantity) {
-
-                          setState(() {
-                            cartItemQuantity = quantity;
-                          });
-                          },
-                        )
+                          QuantityWidget(
+                            suffixText: widget.item.unit,
+                            value: cartItemQuantity,
+                            result: (quantity) {
+                              setState(() {
+                                cartItemQuantity = quantity;
+                              });
+                            },
+                          ),
                         ],
                       ),
-                      // Preço
                       Text(
                         utilsServices.priceToCurrency(widget.item.price),
                         style: TextStyle(
@@ -86,7 +89,6 @@ class _ProductScreenState extends State<ProductScreen> {
                           color: CustomColors.customSwatchColor,
                         ),
                       ),
-                      // Descrição
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 10),
@@ -100,25 +102,38 @@ class _ProductScreenState extends State<ProductScreen> {
                           ),
                         ),
                       ),
-                      // Botão
                       SizedBox(
                         height: 55,
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF813FF2), // Mesma cor do login
+                            backgroundColor: const Color(0xFF813FF2),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
-                          onPressed: () {},
-                          label: const Text('Add no carrinho', style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),),
+                          onPressed: () {
+                            final cartManager = context.read<CartManager>();
+                            cartManager.addItem(widget.item, cartItemQuantity);
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Produto adicionado ao carrinho!'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                          label: const Text(
+                            'Add no carrinho',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
                           icon: const Icon(
                             Icons.shopping_cart_outlined,
-                            color: Colors.white,)
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -127,14 +142,14 @@ class _ProductScreenState extends State<ProductScreen> {
               ),
             ],
           ),
-        
           Positioned(
             left: 10,
             top: 10,
             child: SafeArea(
               child: IconButton(
                 onPressed: () => Navigator.of(context).pop(),
-               icon:const Icon(Icons.arrow_back_ios),),
+                icon: const Icon(Icons.arrow_back_ios),
+              ),
             ),
           ),
         ],
@@ -142,4 +157,3 @@ class _ProductScreenState extends State<ProductScreen> {
     );
   }
 }
-////// VER ESSA TELA PQ A COR TA ESTRANHA 

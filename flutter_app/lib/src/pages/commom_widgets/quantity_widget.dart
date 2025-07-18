@@ -95,8 +95,8 @@ class _QuantityButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(50),
         onTap: onPressed,
         child: Ink(
-          height: 40,
-          width: 40,
+          height: 30,  // era 40 os 2
+          width: 30,
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
